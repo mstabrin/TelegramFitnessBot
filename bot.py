@@ -1,12 +1,15 @@
 import telepot
 import os
+import glob
 from time import sleep
 
 LAST_COMMAND = {}
+training_content = 'training'
+
 
 def main():
     """Main Function"""
-    dict_train = load_training('training.txt')
+    dict_train = load_training()
 
     bot = telepot.Bot(os.environ['BOT_TOKEN'])
     bot.message_loop(lambda x: check_training(x, dict_train, bot))
@@ -16,6 +19,7 @@ def main():
             sleep(10)
     except KeyboardInterrupt:
         return
+
 
 def check_training(msg, dict_train, bot):
     """Event loop to check what is going on"""
@@ -47,7 +51,7 @@ def check_training(msg, dict_train, bot):
         bot.sendMessage(user_id, message)
     else:
         bot.sendMessage(user_id, 'Command not valid: {0}'.format(text))
-        
+
 
 def handle_second_command(text, user_id, dict_train, bot):
     """Handle the second command case"""
@@ -58,6 +62,7 @@ def handle_second_command(text, user_id, dict_train, bot):
         bot.sendMessage(user_id, message)
     else:
         pass
+
 
 def handle_third_command(text, user_id, dict_train, bot):
     """Handle the thid command case"""
@@ -72,6 +77,7 @@ def handle_third_command(text, user_id, dict_train, bot):
                     bot.sendMessage(user_id, message)
     else:
         pass
+
 
 def format_output(user_id, dict_train, text):
     """Format the output in a nice way"""
@@ -93,18 +99,22 @@ def decrypt_msg(msg):
     """Return only the important notes"""
     return msg['text'], msg['chat']['id']
 
-def load_training(train_file):
+
+def load_training():
     """Load the training from text file"""
     dict_train = {}
-    with open(train_file, 'r') as read:
-        for line in read:
-            line = line.rstrip('\n')
-            if line == '':
-                continue
-            if line.startswith('###'):
-                key = line.split(' ')[-1]
-            else:
-                dict_train[key] = line.split(',')
+    for train_file in glob.glob('{0}/*'.format(training_content)):
+        if train_file == '{0}/template.txt'.format(training_content):
+            continue
+        with open(train_file, 'r') as read:
+            for line in read:
+                line = line.rstrip('\n')
+                if line == '':
+                    continue
+                if line.startswith('###'):
+                    key = line.split(' ')[-1]
+                else:
+                    dict_train[key] = line.split(',')
     
     return dict_train
 
