@@ -1,0 +1,14 @@
+### first_commands
+/cmd1,/cmd2,/cmd3,...
+
+### second_commands
+/week1,/week2/,week3/,...
+
+### third_commands
+/d1,/d2/,d3/,...,/all
+
+### /cmd1/week1/d1
+content,seperated,by,comma
+
+### /cmd1/week2/d3
+content,seperated,by,comma
